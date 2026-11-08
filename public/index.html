@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0f14">
+  <meta name="description" content="Assetly Finance: investigación de mercado con cotizaciones, fundamentos, noticias con fuentes y cartera virtual educativa.">
+  <title>Assetly Finance — Investigación de mercado</title>
+  <link rel="stylesheet" href="styles.css?v=20261106-3">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="/" aria-label="Assetly Finance inicio">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span>Assetly Finance<span class="brand-caption">INVESTIGACIÓN PERSONAL</span></span>
+      </a>
+      <div class="nav-label">WORKSPACE</div>
+      <a class="nav-item active" href="#overview"><span class="nav-icon">▦</span> Market overview</a>
+      <a class="nav-item" href="#price-section"><span class="nav-icon">⌁</span> Price history</a>
+      <a class="nav-item" href="#news-section"><span class="nav-icon">≡</span> News sentiment</a>
+      <a class="nav-item" href="#saved"><span class="nav-icon">☆</span> Favoritos y guardados</a>
+      <a class="nav-item" href="#settings"><span class="nav-icon">⚙</span> Ajustes de usuario</a>
+      <div class="sidebar-note">
+        <span class="live-dot"></span>
+        <div><strong>Research mode</strong><small>Datos de mercado bajo demanda</small></div>
+      </div>
+      <div class="sidebar-footer">PROYECTO PERSONAL<br><span>EDUCATIONAL · NO ADVICE</span></div>
+    </aside>
+
+    <main class="main-content" id="appMain">
+      <header class="topbar">
+        <div class="breadcrumbs">Workspace <span>/</span> <span id="breadcrumbPage">Market overview</span></div>
+        <div class="topbar-right"><span class="market-status"><i></i> COTIZACIÓN · REFRESCO 30 S</span><button class="account-button" id="accountButton" type="button">Iniciar sesión</button></div>
+      </header>
+
+      <section class="page-view active" id="overviewView" aria-label="Market overview">
+      <section class="page-heading">
+        <div>
+          <p class="eyebrow">PERSONAL MARKET BRIEF</p>
+          <h1>Market overview</h1>
+          <p class="intro">Precio, contexto de mercado y tono reciente de noticias, en un solo lugar.</p>
+        </div>
+        <div class="last-refresh" id="refreshInfo">Esperando análisis</div>
+      </section>
+
+      <form class="search-panel" id="analysisForm">
+        <label class="field ticker-field"><span>ACTIVO</span><span class="ticker-wrap"><span class="search-icon" aria-hidden="true">⌕</span><input id="ticker" placeholder="Ej.: AAPL, MSFT, GGAL.BA" maxlength="15" autocomplete="off" spellcheck="false" aria-label="Símbolo del activo" aria-autocomplete="list" aria-controls="symbolSearchResults"></span></label>
+        <label class="field"><span>PERIODO</span><select id="periodo"><option value="1mo">1 mes</option><option value="3mo" selected>3 meses</option><option value="6mo">6 meses</option><option value="1y">1 año</option></select></label>
+        <label class="field"><span>INTERVALO</span><select id="intervalo"><option value="1d" selected>Diario</option><option value="1h">1 hora</option></select></label>
+        <button class="primary-button" id="ejecutar" type="submit"><span>Analizar activo</span><span aria-hidden="true">↗</span></button>
+        <button class="clear-search-button" id="clearSearchButton" type="button" aria-label="Limpiar búsqueda y volver a los activos destacados">Limpiar</button>
+      </form>
+      <section id="symbolSearchPanel" class="symbol-search-panel hidden" aria-label="Resultados de búsqueda">
+        <div class="symbol-search-toolbar"><label class="field"><span>FILTRAR TIPO DE ACTIVO</span><select id="symbolTypeFilter"><option value="all">Todos</option><option value="EQUITY">Acciones</option><option value="ETF">ETF</option><option value="INDEX">Índices</option><option value="MUTUALFUND">Fondos</option></select></label><span id="symbolSearchStatus" role="status"></span></div>
+        <div id="symbolSearchResults" class="symbol-search-results"></div>
+      </section>
+
+      <section class="threshold-panel" aria-label="Umbrales de sentimiento">
+        <div class="threshold-copy"><span class="eyebrow">RANGO DE SENTIMIENTO</span><span>Ajustá los umbrales que clasifican el tono de los titulares; no son órdenes de compra o venta.</span></div>
+        <label class="threshold-control buy-control"><span>POSITIVO ≥</span><input id="umbralCompra" type="range" min="0" max="1" step="0.05" value="0.5"><output id="umbralCompraVal">0.50</output></label>
+        <label class="threshold-control sell-control"><span>NEGATIVO ≤</span><input id="umbralVenta" type="range" min="-1" max="0" step="0.05" value="-0.5"><output id="umbralVentaVal">-0.50</output></label>
+      </section>
+
+      <section id="marketHighlights" class="market-highlights" aria-label="Activos de referencia">
+        <div class="highlights-heading"><div><p class="eyebrow">SEGUIMIENTO DE MERCADO</p><h2>Activos destacados</h2><p>Una referencia rápida antes de buscar un símbolo.</p></div><span id="highlightsUpdated">Cargando cotizaciones…</span></div>
+        <div id="highlightCards" class="highlight-grid" aria-live="polite"></div>
+        <p class="highlights-note">La fuente y la hora figuran en cada activo. Puede haber demoras según el mercado y el plan del proveedor. Elegí un activo para abrir su análisis.</p>
+      </section>
+      <div id="emptyState" class="state-panel hidden"><div class="state-art" aria-hidden="true">↗</div><div><strong>Tu brief empieza acá</strong><p>Buscá un símbolo para consultar el último cierre y analizar noticias recientes.</p></div></div>
+      <div id="loadingState" class="state-panel hidden" role="status"><span class="spinner"></span><div><strong>Actualizando market brief</strong><p>Consultando cotizaciones y noticias. Esto puede tardar unos segundos.</p></div></div>
+      <div id="errorState" class="state-panel error-panel hidden" role="alert"><span class="error-mark">!</span><div><strong>No se pudo completar el análisis</strong><p id="errorMessage"></p></div><button id="retryButton" class="text-button" type="button">Intentar de nuevo ↗</button></div>
+
+      <div id="content" class="results hidden" aria-live="polite">
+        <section class="asset-heading">
+          <div class="asset-identity"><div class="asset-monogram" id="assetMonogram">A</div><div><div class="asset-name" id="assetName">—</div><div class="asset-subtitle"><span id="assetTicker">—</span><span class="separator">·</span><span id="assetExchange">Mercado no informado</span></div></div></div>
+          <div class="asset-price"><div id="metricPrecio">—</div><div class="price-context" id="priceDate">—</div><span class="quote-badge" id="quoteBadge">Último cierre</span><div class="quote-updated" id="quoteUpdated"></div></div>
+          <div class="asset-actions"><button class="small-button hidden" id="favoriteButton" type="button">☆ Guardar favorito</button><button class="small-button hidden" id="saveAnalysisButton" type="button">Guardar análisis</button><button class="small-button hidden" id="downloadAnalysisButton" type="button">Exportar brief CSV</button><button class="small-button hidden" id="buyButton" type="button">Comprar simulado</button></div>
+        </section>
+
+        <p id="quoteWarning" class="quote-warning hidden" role="status"></p>
+
+        <section class="metric-grid" aria-label="Resumen del activo">
+          <article class="metric-card"><div class="metric-top"><span>VARIACIÓN</span><span class="metric-icon">↕</span></div><strong id="metricVariacion">—</strong><small id="variationContext">—</small></article>
+          <article class="metric-card"><div class="metric-top"><span>SENTIMIENTO PROMEDIO</span><span class="metric-icon">◌</span></div><strong id="metricSentimiento">—</strong><small id="sentimentContext">—</small></article>
+          <article class="metric-card"><div class="metric-top"><span>TITULARES VÁLIDOS</span><span class="metric-icon">≡</span></div><strong id="metricNoticias">—</strong><small>de hasta 10 noticias recientes</small></article>
+          <article class="signal-card" id="signalCard"><div class="metric-top"><span>TONO DE TITULARES</span><span class="signal-indicator" id="signalIndicator"></span></div><strong id="signalValue">—</strong><small id="signalContext">Resumen textual VADER; no es recomendación de inversión.</small></article>
+        </section>
+
+        <section class="panel education-assessment" id="educationAssessment" aria-labelledby="assessmentTitle">
+          <div class="panel-heading"><div><p class="eyebrow">LECTURA AUTOMÁTICA · NO PERSONALIZADA</p><h2 id="assessmentTitle">Orientación educativa</h2></div><strong id="assessmentResult" class="assessment-result">Esperando análisis</strong></div>
+          <p id="assessmentDisclaimer" class="panel-hint">La orientación se calcula con el periodo de precio, los fundamentos disponibles y noticias validadas. No es asesoramiento ni predicción.</p>
+          <div id="assessmentComponents" class="assessment-components"></div>
+          <p id="assessmentMethod" class="assessment-method"></p>
+          <div class="assessment-sources"><strong>Fuentes para revisar</strong><div id="assessmentSources"></div><small>La cotización y los fundamentos del cálculo provienen de Yahoo Finance. El enlace de la bolsa abre su ficha oficial para que puedas contrastar el dato; Assetly Finance no extrae ni confirma automáticamente los datos de esa página.</small></div>
+        </section>
+
+        <section class="panel change-summary-panel" id="changeSummaryPanel" aria-label="Resumen de cambios">
+          <div class="panel-heading"><div><p class="eyebrow">RESUMEN DEL PERIODO</p><h2>Qué cambió</h2></div><span id="periodSummaryRange" class="period-chip">—</span></div>
+          <p id="periodSummaryText" class="change-summary-text">El resumen se calcula con los cierres disponibles.</p>
+          <div class="change-summary-stats"><span id="periodSummaryHigh">Máximo: —</span><span id="periodSummaryLow">Mínimo: —</span><span id="periodSummaryCount">Muestra: —</span></div>
+        </section>
+
+        <section class="panel events-panel" id="eventsPanel" aria-label="Calendario de eventos del activo">
+          <div class="panel-heading"><div><p class="eyebrow">CALENDARIO DEL ACTIVO</p><h2>Próximos eventos reportados</h2></div><span id="eventsStatus" class="news-count">Consultando</span></div>
+          <p class="panel-hint">Incluye resultados y fechas de dividendos que informa el proveedor. Algunas fechas de resultados son estimadas; confirmalas en relaciones con inversores antes de tomar decisiones.</p>
+          <div id="eventsList" class="events-list"></div>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel chart-panel" id="price-section">
+            <div class="panel-heading"><div><p class="eyebrow">PRICE HISTORY</p><h2>Evolución del precio</h2></div><span class="period-chip" id="chartPeriod">3 meses · diario</span></div>
+            <div class="chart-summary"><strong id="chartTicker">AAPL</strong><span>Precio de cierre</span></div>
+            <div class="chart-wrap"><canvas id="priceChart" aria-label="Gráfico histórico del precio de cierre"></canvas><div id="chartFallback" class="chart-fallback hidden"></div></div>
+            <div class="chart-footnote"><span>Fuente: Yahoo Finance</span><span id="chartTimezone">Fechas en tu zona horaria</span></div>
+          </article>
+
+          <article class="panel sentiment-panel">
+            <div class="panel-heading"><div><p class="eyebrow">SIGNAL BREAKDOWN</p><h2>Lectura de sentimiento</h2></div><span class="info-mark" title="VADER analiza el tono del texto; no predice el precio.">i</span></div>
+            <div class="sentiment-score"><div class="score-ring" id="scoreRing"><span id="scoreValue">—</span></div><div><strong id="sentimentLabel">Sin datos</strong><small>Escala de -1 a +1</small></div></div>
+            <div class="score-track"><span class="track-negative">NEGATIVO</span><div><i id="scoreMarker"></i></div><span class="track-positive">POSITIVO</span></div>
+            <p class="sentiment-description" id="sentimentDescription">El análisis de sentimiento aparecerá cuando haya titulares disponibles.</p>
+            <div class="threshold-readout"><span>Reglas aplicadas</span><span id="thresholdReadout">Compra +0.50 · Venta -0.50</span></div>
+            <div class="method-note"><span class="method-dot"></span><span>VADER · análisis léxico en inglés. El resultado puede ser menos fiable con titulares en otros idiomas.</span></div>
+          </article>
+        </section>
+
+        <section class="content-grid analysis-tools-grid">
+          <article class="panel fundamentals-panel" id="fundamentalsPanel"><div class="panel-heading"><div><p class="eyebrow">FICHA DE FUNDAMENTOS</p><h2>Indicadores reportados</h2></div><span id="fundamentalsStatus" class="news-count">Esperando activo</span></div><p id="fundamentalsMeta" class="panel-hint">Métricas que informa el proveedor. No todos los activos tienen los mismos datos.</p><div id="fundamentalsList" class="quality-grid"></div></article>
+          <article class="panel scenario-panel"><div class="panel-heading"><div><p class="eyebrow">ESCENARIOS EDUCATIVOS</p><h2>Explorar un cambio hipotético</h2></div></div><label class="field">Cambio hipotético (%)<input id="scenarioChange" type="number" min="-90" max="300" step="1" value="10"></label><button id="scenarioRun" class="small-button" type="button">Calcular escenario</button><p id="scenarioResult" class="panel-hint">Analizá un activo para explorar un escenario aritmético.</p><small>No es pronóstico ni recomendación. El cálculo no modela volatilidad, eventos ni probabilidad.</small></article>
+        </section>
+        <section class="panel compare-panel" id="comparePanel"><div class="panel-heading"><div><p class="eyebrow">COMPARADOR</p><h2>Comparar activos</h2></div></div><form id="compareForm" class="watchlist-controls"><label class="field"><span>SÍMBOLOS (HASTA 4)</span><input id="compareTickers" placeholder="AAPL, MSFT, NVDA" maxlength="70"></label><button class="small-button" type="submit">Comparar</button></form><p id="compareNote" class="panel-hint"></p><div id="compareResults" class="saved-list"></div></section>
+
+        <section class="panel news-panel" id="news-section">
+          <div class="panel-heading"><div><p class="eyebrow">LATEST COVERAGE</p><h2>Noticias analizadas</h2></div><span class="news-count" id="newsCountLabel">0 titulares</span></div>
+          <p class="panel-hint news-provenance-note">Los titulares provienen del proveedor de noticias. Se muestran enlaces HTTPS del medio identificado y artículos sindicados alojados en Yahoo Finance con su editor atribuido; abrí el enlace para comprobar la publicación. La atribución y el titular no certifican por sí solos todo el contenido.</p>
+          <p id="newsContextSummary" class="news-context-summary" aria-live="polite">Sin muestra de noticias para contextualizar.</p>
+          <div id="newsList" class="news-list"></div>
+          <div id="noNews" class="no-news hidden"><span class="no-news-icon">≡</span><div><strong id="noNewsTitle">No hay noticias relevantes para analizar</strong><p id="noNewsText">No aparecieron titulares relevantes con texto disponible. La señal no se calcula sin datos.</p></div></div>
+        </section>
+
+        <section class="panel variation-context-panel" id="variationContextPanel" aria-label="Contexto de la variación">
+          <div class="panel-heading"><div><p class="eyebrow">CONTEXTO TEMPORAL</p><h2>Noticias cercanas a la variación</h2></div><span id="variationNewsCount" class="news-count">0 titulares</span></div>
+          <p class="panel-hint" id="variationContextNote">Una coincidencia temporal no demuestra que la noticia haya causado el movimiento del precio.</p>
+          <div id="variationNewsList" class="variation-news-list"></div>
+        </section>
+
+        <details class="quality-details" id="dataQualityDetails">
+          <summary>Calidad y origen de los datos</summary>
+          <div class="quality-grid">
+            <div><span>Estado del precio</span><strong id="qualityQuoteStatus">—</strong></div>
+            <div><span>Fuente de cotización</span><strong id="qualityQuoteSource">—</strong></div>
+            <div><span>Fecha del dato</span><strong id="qualityQuoteDate">—</strong></div>
+            <div><span>Moneda y mercado</span><strong id="qualityMarket">—</strong></div>
+            <div><span>Demora reportada</span><strong id="qualityDelay">—</strong></div>
+            <div><span>Variación comparada con</span><strong id="qualityVariation">—</strong></div>
+            <div><span>Noticias</span><strong id="qualityNews">—</strong></div>
+            <div><span>Muestra de precios</span><strong id="qualitySample">—</strong></div>
+          </div>
+        </details>
+
+        <section class="data-note"><span class="data-note-icon">i</span><div><strong>Sobre estos datos</strong><p>La cotización se consulta al proveedor indicado y se actualiza cada 30 segundos mientras esta vista permanece abierta; la disponibilidad y el retraso dependen del mercado y del plan de datos. Si no se actualiza, se identifica el último dato guardado. El resumen y la variación indican sus cierres de referencia. La cercanía temporal de una noticia no prueba causalidad; el sentimiento no predice el precio.</p></div></section>
+        <footer class="page-footer"><span>AI FINANCE · PERSONAL RESEARCH PROJECT</span><span>Uso educativo · No constituye asesoramiento financiero</span></footer>
+      </div>
+      </section>
+      <section class="page-view hidden" id="savedView" aria-label="Favoritos y activos guardados">
+        <section class="page-heading"><div><p class="eyebrow">TU LISTA</p><h1>Favoritos y guardados</h1><p class="intro">Accedé rápido a tus activos y a los análisis que guardaste.</p></div></section>
+        <div id="savedLoginPrompt" class="state-panel"><div class="state-art" aria-hidden="true">☆</div><div><strong>Iniciá sesión para ver tus listas</strong><p>Los favoritos y análisis guardados son privados de tu cuenta.</p></div><button class="small-button" id="savedLoginButton" type="button">Iniciar sesión</button></div>
+        <section id="savedContent" class="saved-grid hidden">
+          <div class="export-tools"><p class="panel-hint">Descargá una copia de tus favoritos, análisis guardados y cartera virtual.</p><button id="exportPersonalDataButton" type="button" class="small-button">Exportar mis datos JSON</button><span id="exportStatus" role="status"></span></div>
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">WATCHLIST</p><h2>Mis activos</h2></div><span id="watchlistCount" class="news-count">0 activos</span></div><div class="watchlist-controls"><label class="field"><span>FILTRAR MI LISTA</span><input id="watchlistFilter" type="search" placeholder="Nombre o símbolo"></label><label class="field"><span>ORDENAR</span><select id="watchlistSort"><option value="symbol">Símbolo</option><option value="change-desc">Mayor variación</option><option value="change-asc">Menor variación</option></select></label></div><p id="watchlistStatus" class="watchlist-status" role="status"></p><div id="favoritesList" class="saved-list"></div></article>
+          <article class="panel"><div class="panel-heading"><div><p class="eyebrow">SAVED BRIEFS</p><h2>Análisis guardados</h2></div></div><div id="savedAnalysesList" class="saved-list"></div></article>
+        </section>
+      </section>
+      <section class="page-view hidden" id="settingsView" aria-label="Ajustes de usuario">
+        <section class="page-heading"><div><p class="eyebrow">PREFERENCIAS</p><h1>Ajustes de usuario</h1><p class="intro">Administrá tu cuenta, cartera virtual y canal de WhatsApp.</p></div></section>
+        <section class="personal-panel preferences-panel" aria-label="Preferencias de accesibilidad y visualización">
+          <div class="panel-heading"><div><p class="eyebrow">ACCESIBILIDAD</p><h2>Preferencias de visualización</h2></div></div>
+          <p class="panel-hint">Se guardan en este navegador. Si iniciás sesión, también se sincronizan con tu cuenta.</p>
+          <form id="preferencesForm" class="preferences-form">
+            <label class="field"><span>TAMAÑO DEL TEXTO</span><select id="preferenceTextSize"><option value="normal">Normal</option><option value="large">Grande</option></select></label>
+            <label class="field"><span>APARIENCIA</span><select id="preferenceTheme"><option value="dark">Oscura</option><option value="light">Clara</option></select></label>
+            <label class="preference-toggle"><input id="preferenceHighContrast" type="checkbox"><span>Mayor contraste</span></label>
+            <label class="preference-toggle"><input id="preferenceReduceMotion" type="checkbox"><span>Reducir animaciones</span></label>
+            <button class="small-button" type="submit">Guardar preferencias</button><span id="preferencesStatus" role="status"></span>
+          </form>
+        </section>
+        <div id="settingsLoginPrompt" class="state-panel"><div class="state-art" aria-hidden="true">⚙</div><div><strong>Iniciá sesión para acceder a tu cartera y alertas</strong><p>Las preferencias de visualización están disponibles sin cuenta; la cartera y WhatsApp son privadas.</p></div><button class="small-button" id="settingsLoginButton" type="button">Iniciar sesión</button></div>
+      <section class="personal-panel hidden" id="personalPanel" aria-label="Cartera y alertas personales">
+        <div class="panel-heading"><div><p class="eyebrow">MI ESPACIO</p><h2>Cartera virtual</h2></div><button class="text-button" id="logoutButton" type="button">Cerrar sesión</button></div>
+        <p class="panel-hint">Compras simuladas al último cierre disponible. No se usa dinero real.</p>
+        <form id="goalForm" class="settings-form"><h3>Objetivos de ahorro virtual</h3><label>Objetivo<input id="goalTitle" maxlength="100" placeholder="Ej. Seguir mi objetivo de largo plazo" required></label><div class="watchlist-controls"><label class="field">Monto objetivo<input id="goalTarget" type="number" min="0.01" step="0.01" required></label><label class="field">Moneda<input id="goalCurrency" maxlength="3" placeholder="USD" required></label><label class="field">Fecha objetivo<input id="goalDate" type="date"></label></div><button class="small-button">Agregar objetivo</button></form><div id="goalsList" class="saved-list"></div>
+        <div id="portfolioList" class="portfolio-list"></div>
+        <form id="journalForm" class="settings-form"><h3>Diario de inversión</h3><label>Símbolo<input id="journalTicker" maxlength="15" required></label><label>Tipo<select id="journalCategory"><option value="idea">Idea</option><option value="research">Investigación</option><option value="decision">Decisión</option><option value="review">Revisión</option></select></label><label>Nota<textarea id="journalNote" rows="3" maxlength="3000" required></textarea></label><button class="small-button">Guardar nota</button></form><div id="journalList" class="saved-list"></div>
+        <details class="settings-details"><summary>Configurar alertas de WhatsApp</summary>
+          <form id="whatsappSettingsForm" class="settings-form">
+            <label>Teléfono de WhatsApp<input id="whatsappPhone" type="tel" placeholder="+54 9 11 2572-3013" autocomplete="tel"></label>
+            <small>Ingresalo con código de país; aceptamos espacios, guiones y números con o sin +. Si WhatsApp indica que no existe una cuenta, verificá el código y que esa línea esté registrada en WhatsApp. La app no puede consultar registros de cuentas.</small>
+            <label>Mensaje de alerta<textarea id="whatsappMessage" rows="4" maxlength="700"></textarea></label>
+            <small>Variables disponibles: {ticker}, {senal}, {precio}, {moneda}, {fecha}, {sentimiento}.</small>
+            <div class="settings-actions"><button class="small-button" type="submit">Guardar mensaje</button><button class="text-button" id="whatsappTestButton" type="button">Enviar prueba de WhatsApp</button><button class="small-button" id="sendAlertButton" type="button">Preparar mensaje de alerta</button></div>
+            <small>La prueba solo confirma que WhatsApp abre la conversación. Para enviar los datos del activo, usá “Preparar mensaje de alerta”. WhatsApp requiere que confirmes Enviar.</small>
+            <a id="whatsappLink" class="whatsapp-link hidden" target="_blank" rel="noopener noreferrer">Abrir WhatsApp y revisar mensaje ↗</a>
+            <p id="settingsStatus" role="status"></p>
+            <small id="whatsappStatus"></small>
+          </form>
+        </details>
+      </section>
+      </section>
+    </main>
+  </div>
+  <dialog id="authDialog" class="auth-dialog">
+    <form id="authForm" method="dialog">
+      <button class="dialog-close" id="closeAuth" type="button" aria-label="Cerrar">×</button>
+      <p class="eyebrow">AI FINANCE · CUENTA</p><h2 id="authTitle">Iniciar sesión</h2>
+      <p id="authHelp" class="panel-hint">Ingresá para acceder a la cartera y a las alertas.</p>
+      <label>Correo electrónico<input id="authEmail" type="email" required autocomplete="email"></label>
+      <label>Contraseña<input id="authPassword" type="password" required minlength="10" autocomplete="current-password"></label>
+      <button class="primary-button" id="authSubmit" type="submit">Iniciar sesión</button>
+      <button class="text-button" id="authToggle" type="button">Crear una cuenta</button>
+      <p id="authStatus" role="alert"></p>
+    </form>
+  </dialog>
+  <dialog id="buyDialog" class="auth-dialog">
+    <form id="buyForm" method="dialog">
+      <button class="dialog-close" id="closeBuy" type="button" aria-label="Cerrar">×</button>
+      <p class="eyebrow">CARTERA VIRTUAL</p><h2>Compra simulada</h2>
+      <p class="panel-hint">Se registrará al último cierre disponible de <strong id="buyTickerLabel">—</strong>. No usa dinero real.</p>
+      <label>Cantidad de acciones<input id="buyShares" type="number" min="0.001" max="1000000" step="any" value="1" required></label>
+      <button class="primary-button" type="submit">Confirmar compra simulada</button>
+      <p id="buyStatus" role="alert"></p>
+    </form>
+  </dialog>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
+  <script src="app.js?v=20261106-6" defer></script>
+</body>
+</html>
