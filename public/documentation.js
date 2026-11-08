@@ -13,7 +13,7 @@ const documentationEntries = [
   { id:'capitalizacion', term:'Capitalización bursátil', aliases:['market cap','valor de mercado'], category:'Empresas', definition:'Es el valor de mercado agregado de las acciones de una empresa; suele estimarse multiplicando el precio por la cantidad de acciones en circulación.', example:'Con 1 millón de acciones a 20 unidades monetarias cada una, la capitalización aproximada es 20 millones.', why:'Ayuda a contextualizar el tamaño de mercado reportado para una empresa.', cautions:'No es lo mismo que efectivo, ventas, valor contable ni el precio que obtendría alguien al vender toda la compañía.', sources:[['Investor.gov · Glosario','https://www.investor.gov/introduction-investing/investing-basics/glossary']] },
   { id:'pe', term:'Relación precio/ganancias (P/E)', aliases:['price earnings ratio','PER','trailing PE','forward PE'], category:'Empresas', definition:'Compara el precio de una acción con las ganancias por acción durante un periodo definido. El resultado depende de si se usan ganancias históricas o estimadas.', example:'Un P/E de 20 significa que el precio equivale a 20 veces las ganancias por acción usadas en ese cálculo.', why:'Assetly muestra la métrica cuando el proveedor la reporta y señala la ficha de fundamentos como dato del proveedor.', cautions:'Puede no ser útil con pérdidas, ganancias extraordinarias o empresas de sectores distintos. Un número bajo no prueba que una acción esté barata.', sources:[['Investor.gov · Price-earnings ratio','https://www.investor.gov/introduction-investing/investing-basics/glossary/price-earnings-pe-ratio']] },
   { id:'ingresos', term:'Ingresos (revenue)', aliases:['ventas','revenue growth','crecimiento de ingresos'], category:'Empresas', definition:'Son los importes generados principalmente por la venta de bienes o servicios antes de descontar los gastos de la empresa.', example:'Si las ventas pasan de 100 a 110 entre periodos comparables, crecieron 10%.', why:'El crecimiento de ingresos es una de las métricas que puede aparecer en los fundamentos reportados.', cautions:'Vender más no garantiza obtener ganancias; compará periodos, moneda, adquisiciones y cambios contables.', sources:[['Investor.gov · Glosario','https://www.investor.gov/introduction-investing/investing-basics/glossary']] },
-  { id:'flujo-caja', term:'Flujo de caja', aliases:['cash flow','flujo de efectivo'], category:'Empresas', definition:'Registra entradas y salidas de efectivo de una empresa durante un periodo. El flujo de caja libre suele estimar el efectivo restante después de inversiones de capital, pero su definición puede variar.', example:'Una empresa puede registrar ganancias contables y, al mismo tiempo, tener poco efectivo disponible si sus clientes todavía no pagaron.', why:'La ficha puede mostrar flujo de caja libre cuando la fuente lo informa.', cautions:'Revisá el periodo, la definición del proveedor y los estados financieros originales; no es igual a beneficio neto.', sources:[['Investor.gov · EDGAR company filings','https://www.investor.gov/introduction-investing/investing-basics/glossary']] },
+  { id:'flujo-caja', term:'Flujo de caja', aliases:['cash flow','flujo de efectivo'], category:'Empresas', definition:'Registra entradas y salidas de efectivo de una empresa durante un periodo. El flujo de caja libre suele estimar el efectivo restante después de inversiones de capital, pero su definición puede variar.', example:'Una empresa puede registrar ganancias contables y, al mismo tiempo, tener poco efectivo disponible si sus clientes todavía no pagaron.', why:'La ficha puede mostrar flujo de caja libre cuando la fuente lo informa.', cautions:'Revisá el periodo, la definición del proveedor y los estados financieros originales; no es igual a beneficio neto.', sources:[['Investor.gov · Glosario','https://www.investor.gov/introduction-investing/investing-basics/glossary'],['SEC · Presentaciones de empresas','https://www.sec.gov/edgar/search/']] },
   { id:'margen', term:'Margen neto', aliases:['net margin','rentabilidad sobre ventas'], category:'Empresas', definition:'Es la proporción de ingresos que queda como ganancia neta después de gastos, intereses e impuestos, según los datos utilizados.', example:'Un margen neto de 8% equivale a 8 de ganancia neta por cada 100 de ingresos.', why:'Puede ayudar a observar cuánto beneficio genera una empresa por sus ingresos.', cautions:'La comparación entre sectores y periodos distintos puede ser poco significativa; puede incluir partidas no recurrentes.', sources:[['SEC · Company filings and financial statements','https://www.sec.gov/edgar/search/']] },
   { id:'roe', term:'ROE (retorno sobre patrimonio)', aliases:['return on equity','retorno sobre patrimonio'], category:'Empresas', definition:'Relaciona la ganancia neta de un periodo con el patrimonio contable. Es una medida de rentabilidad contable respecto del capital propio.', example:'Un ROE de 12% indica una ganancia equivalente al 12% del patrimonio usado en el cálculo.', why:'Assetly puede reportarlo si está disponible para el activo.', cautions:'El endeudamiento, recompras, pérdidas acumuladas y partidas extraordinarias pueden elevarlo o distorsionarlo.', sources:[['SEC · EDGAR company filings','https://www.sec.gov/edgar/search/']] },
   { id:'dividendo', term:'Dividendo', aliases:['dividend','dividend yield','rendimiento por dividendo'], category:'Empresas', definition:'Es una distribución de dinero u otros activos que una compañía puede hacer a sus accionistas. El rendimiento por dividendo compara el pago anual estimado con el precio de la acción.', example:'Un pago anual de 2 sobre un precio de 100 equivale a 2% de rendimiento indicativo, si el pago se mantiene.', why:'La ficha puede informar rendimiento por dividendo cuando existe cobertura.', cautions:'La empresa puede reducir, suspender o no pagar dividendos; un rendimiento alto también puede deberse a una caída de precio.', sources:[['Investor.gov · Dividend','https://www.investor.gov/introduction-investing/investing-basics/glossary/dividend']] },
@@ -44,6 +44,7 @@ function renderDocumentation() {
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'documentation-term'; button.role = 'option'; button.dataset.termId = entry.id;
     button.setAttribute('aria-selected', String(button.dataset.termId === selectedDocumentationId));
+    button.tabIndex = button.dataset.termId === selectedDocumentationId ? 0 : -1;
     const title = document.createElement('strong'); title.textContent = entry.term;
     const categoryLabel = document.createElement('small'); categoryLabel.textContent = entry.category;
     button.append(title, categoryLabel);
@@ -51,7 +52,8 @@ function renderDocumentation() {
     list.append(button);
   }
   if (results.length && !results.some((entry) => entry.id === selectedDocumentationId)) selectDocumentationTerm(results[0].id);
-  else if (!results.length) selectedDocumentationId = null;
+  else if (results.length) selectDocumentationTerm(selectedDocumentationId);
+  else selectedDocumentationId = null;
 }
 
 let selectedDocumentationId = 'bolsa';
@@ -59,7 +61,10 @@ function selectDocumentationTerm(id) {
   const entry = documentationEntries.find((item) => item.id === id);
   if (!entry) return;
   selectedDocumentationId = id;
-  document.querySelectorAll('.documentation-term').forEach((button) => button.setAttribute('aria-selected', String(button.dataset.termId === id)));
+  document.querySelectorAll('.documentation-term').forEach((button) => {
+    const selected = button.dataset.termId === id;
+    button.setAttribute('aria-selected', String(selected)); button.tabIndex = selected ? 0 : -1;
+  });
   document.getElementById('documentationDetailCategory').textContent = entry.category.toLocaleUpperCase('es');
   document.getElementById('documentationDetailTitle').textContent = entry.term;
   document.getElementById('documentationDetailDefinition').textContent = entry.definition;
@@ -81,4 +86,16 @@ function setDocumentationBlock(blockId, textId, text) {
 
 document.getElementById('documentationSearch')?.addEventListener('input', renderDocumentation);
 document.getElementById('documentationCategory')?.addEventListener('change', renderDocumentation);
+document.getElementById('documentationTerms')?.addEventListener('keydown', (event) => {
+  const options = [...document.querySelectorAll('.documentation-term')];
+  const currentIndex = options.indexOf(document.activeElement);
+  if (currentIndex < 0 || !options.length) return;
+  const nextIndex = event.key === 'ArrowDown' ? (currentIndex + 1) % options.length
+    : event.key === 'ArrowUp' ? (currentIndex - 1 + options.length) % options.length
+      : event.key === 'Home' ? 0 : event.key === 'End' ? options.length - 1 : -1;
+  if (nextIndex < 0) return;
+  event.preventDefault();
+  selectDocumentationTerm(options[nextIndex].dataset.termId);
+  options[nextIndex].focus();
+});
 renderDocumentation();
