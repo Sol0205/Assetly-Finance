@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b0f14">
   <meta name="description" content="Assetly Finance: investigación de mercado con cotizaciones, fundamentos, noticias con fuentes y cartera virtual educativa.">
   <title>Assetly Finance — Investigación de mercado</title>
-  <link rel="stylesheet" href="styles.css?v=20261106-3">
+  <link rel="stylesheet" href="styles.css?v=20261107-1">
 </head>
 <body>
   <div class="app-shell">
@@ -21,6 +21,7 @@
       <a class="nav-item" href="#news-section"><span class="nav-icon">≡</span> News sentiment</a>
       <a class="nav-item" href="#saved"><span class="nav-icon">☆</span> Favoritos y guardados</a>
       <a class="nav-item" href="#settings"><span class="nav-icon">⚙</span> Ajustes de usuario</a>
+      <a class="nav-item" href="#documentation"><span class="nav-icon">?</span> Documentación</a>
       <div class="sidebar-note">
         <span class="live-dot"></span>
         <div><strong>Research mode</strong><small>Datos de mercado bajo demanda</small></div>
@@ -160,7 +161,7 @@
         </details>
 
         <section class="data-note"><span class="data-note-icon">i</span><div><strong>Sobre estos datos</strong><p>La cotización se consulta al proveedor indicado y se actualiza cada 30 segundos mientras esta vista permanece abierta; la disponibilidad y el retraso dependen del mercado y del plan de datos. Si no se actualiza, se identifica el último dato guardado. El resumen y la variación indican sus cierres de referencia. La cercanía temporal de una noticia no prueba causalidad; el sentimiento no predice el precio.</p></div></section>
-        <footer class="page-footer"><span>AI FINANCE · PERSONAL RESEARCH PROJECT</span><span>Uso educativo · No constituye asesoramiento financiero</span></footer>
+        <footer class="page-footer"><span>ASSETLY FINANCE · PERSONAL RESEARCH PROJECT</span><span>Uso educativo · No constituye asesoramiento financiero</span></footer>
       </div>
       </section>
       <section class="page-view hidden" id="savedView" aria-label="Favoritos y activos guardados">
@@ -207,12 +208,35 @@
         </details>
       </section>
       </section>
+      <section class="page-view hidden" id="documentationView" aria-label="Documentación financiera">
+        <section class="page-heading"><div><p class="eyebrow">CENTRO DE APRENDIZAJE</p><h1>Documentación</h1><p class="intro">Buscá conceptos financieros y entendé cómo leer los datos de Assetly Finance.</p></div></section>
+        <section class="documentation-layout">
+          <div class="documentation-browser panel">
+            <label class="field documentation-search"><span>BUSCAR EN LA GUÍA</span><input id="documentationSearch" type="search" placeholder="Ej.: flujo de caja, ETF, volatilidad" autocomplete="off"></label>
+            <label class="field documentation-category"><span>CATEGORÍA</span><select id="documentationCategory"><option value="all">Todos los temas</option><option value="Mercado">Mercado</option><option value="Empresas">Empresas</option><option value="Riesgo y cartera">Riesgo y cartera</option><option value="Cómo leer Assetly">Cómo leer Assetly</option></select></label>
+            <p id="documentationCount" class="panel-hint" role="status"></p>
+            <div id="documentationTerms" class="documentation-terms" role="listbox" aria-label="Conceptos financieros"></div>
+            <p id="documentationEmpty" class="portfolio-empty hidden">No encontramos conceptos con esa búsqueda.</p>
+          </div>
+          <article class="documentation-detail panel" id="documentationDetail" aria-live="polite">
+            <p class="eyebrow" id="documentationDetailCategory">CONCEPTO</p>
+            <h2 id="documentationDetailTitle">Elegí un tema</h2>
+            <p id="documentationDetailDefinition" class="documentation-definition">Explorá la guía para encontrar explicaciones sencillas y fuentes para seguir aprendiendo.</p>
+            <div id="documentationExampleBlock" class="documentation-example hidden"><strong>Ejemplo sencillo</strong><p id="documentationDetailExample"></p></div>
+            <div id="documentationWhyBlock" class="documentation-why hidden"><strong>En Assetly Finance</strong><p id="documentationDetailWhy"></p></div>
+            <div id="documentationCautionsBlock" class="documentation-cautions hidden"><strong>A tener en cuenta</strong><p id="documentationDetailCautions"></p></div>
+            <div class="documentation-sources"><strong>Fuentes para ampliar</strong><div id="documentationDetailSources"><a href="https://www.investor.gov/introduction-investing/investing-basics/glossary" target="_blank" rel="noopener noreferrer">Glosario de Investor.gov (SEC) ↗</a></div></div>
+          </article>
+        </section>
+        <section class="data-note documentation-disclaimer"><span class="data-note-icon">i</span><div><strong>Contenido educativo</strong><p>Las definiciones son introductorias y no reemplazan documentos oficiales, investigación propia ni asesoramiento profesional. Algunos indicadores varían según la empresa, el activo, el mercado y el proveedor.</p></div></section>
+        <footer class="page-footer"><span>ASSETLY FINANCE · CENTRO DE APRENDIZAJE</span><span>Uso educativo · No constituye asesoramiento financiero</span></footer>
+      </section>
     </main>
   </div>
   <dialog id="authDialog" class="auth-dialog">
     <form id="authForm" method="dialog">
       <button class="dialog-close" id="closeAuth" type="button" aria-label="Cerrar">×</button>
-      <p class="eyebrow">AI FINANCE · CUENTA</p><h2 id="authTitle">Iniciar sesión</h2>
+      <p class="eyebrow">ASSETLY FINANCE · CUENTA</p><h2 id="authTitle">Iniciar sesión</h2>
       <p id="authHelp" class="panel-hint">Ingresá para acceder a la cartera y a las alertas.</p>
       <label>Correo electrónico<input id="authEmail" type="email" required autocomplete="email"></label>
       <label>Contraseña<input id="authPassword" type="password" required minlength="10" autocomplete="current-password"></label>
@@ -232,6 +256,7 @@
     </form>
   </dialog>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js" defer></script>
-  <script src="app.js?v=20261106-6" defer></script>
+  <script src="documentation.js?v=20261107-1" defer></script>
+  <script src="app.js?v=20261107-1" defer></script>
 </body>
 </html>

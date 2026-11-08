@@ -228,7 +228,8 @@ function setView(view) {
     $('overviewView').classList.toggle('hidden', view !== 'overview');
     $('savedView').classList.toggle('hidden', view !== 'saved');
     $('settingsView').classList.toggle('hidden', view !== 'settings');
-    $('breadcrumbPage').textContent = view === 'saved' ? 'Favoritos y guardados' : view === 'settings' ? 'Ajustes de usuario' : 'Market overview';
+    $('documentationView').classList.toggle('hidden', view !== 'documentation');
+    $('breadcrumbPage').textContent = view === 'saved' ? 'Favoritos y guardados' : view === 'settings' ? 'Ajustes de usuario' : view === 'documentation' ? 'Documentación' : 'Market overview';
     const hash = window.location.hash || '#overview';
     document.querySelectorAll('.nav-item').forEach((link) => link.classList.toggle('active', link.hash === hash));
     if (view === 'saved' && currentUser) refreshSavedLists();
@@ -236,7 +237,7 @@ function setView(view) {
 
 function handleLocation() {
     const hash = window.location.hash;
-    const view = hash === '#saved' ? 'saved' : hash === '#settings' ? 'settings' : 'overview';
+    const view = hash === '#saved' ? 'saved' : hash === '#settings' ? 'settings' : hash === '#documentation' ? 'documentation' : 'overview';
     setView(view);
     if (view === 'overview' && (hash === '#price-section' || hash === '#news-section')) requestAnimationFrame(() => document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' }));
 }

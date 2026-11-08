@@ -11,7 +11,7 @@ Assetly Finance es una aplicación web de investigación de mercado para consult
 - Node.js 22 o posterior (requisito de `yahoo-finance2` v4).
 - npm.
 
-Desde esta carpeta (`AI Finance/IP`):
+Desde la carpeta del proyecto (`AssetlyFinance`):
 
 ```bash
 npm ci
@@ -52,6 +52,7 @@ npm run dev
 - Escenarios aritméticos hipotéticos acotados entre -90% y +300%; no son pronósticos ni recomendaciones.
 - Exportación JSON de favoritos, análisis, operaciones, tenencias, objetivos, diario y preferencias.
 - Diseño adaptable a pantallas grandes y móviles.
+- Centro de documentación buscable con definiciones, ejemplos, notas de interpretación y enlaces a fuentes regulatorias y oficiales.
 
 ### Respaldo de cotizaciones y degradación
 
